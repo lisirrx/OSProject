@@ -24,21 +24,14 @@ public class Vehicle {
     private Road road;
     private int index;
     private Position position;
+
+    public void setMileage(double mileage) {
+        this.mileage = mileage;
+    }
+
     private double velocity;
     private double mileage = 0;
     private SimpleBooleanProperty visable;
-
-    public boolean isVisable() {
-        return visable.get();
-    }
-
-    public SimpleBooleanProperty visableProperty() {
-        return visable;
-    }
-
-    public void setVisable(boolean visable) {
-        this.visable.set(visable);
-    }
 
     public Vehicle(Road road, double velocity) {
         this.position = new Position(road.getPosition());
@@ -47,13 +40,26 @@ public class Vehicle {
         this.visable = new SimpleBooleanProperty(true);
     }
 
+    public boolean isVisable() {
+        return visable.get();
+    }
+
+    public void setVisable(boolean visable) {
+        this.visable.set(visable);
+    }
+
+    public SimpleBooleanProperty visableProperty() {
+        return visable;
+    }
+
     public void setIndex(int index) {
         this.index = index;
     }
 
     public double getWidth() {
 
-        if (road.getDirection() == Road.Direction.N2S || road.getDirection() == Road.Direction.S2N) {
+        if (road.getDirection() == Road.Direction.N2S
+                || road.getDirection() == Road.Direction.S2N) {
             return width;
         } else {
             return height;
@@ -61,7 +67,8 @@ public class Vehicle {
     }
 
     public double getHeight() {
-        if (road.getDirection() == Road.Direction.N2S || road.getDirection() == Road.Direction.S2N) {
+        if (road.getDirection() == Road.Direction.N2S
+                || road.getDirection() == Road.Direction.S2N) {
             return height;
         } else {
             return width;
@@ -70,7 +77,8 @@ public class Vehicle {
 
     public double getArcW() {
 
-        if (road.getDirection() == Road.Direction.N2S || road.getDirection() == Road.Direction.S2N) {
+        if (road.getDirection() == Road.Direction.N2S
+                || road.getDirection() == Road.Direction.S2N) {
             return arcW;
         } else {
             return arcH;
@@ -78,7 +86,8 @@ public class Vehicle {
     }
 
     public double getArcH() {
-        if (road.getDirection() == Road.Direction.N2S || road.getDirection() == Road.Direction.S2N) {
+        if (road.getDirection() == Road.Direction.N2S
+                || road.getDirection() == Road.Direction.S2N) {
             return arcH;
         } else {
             return arcW;
@@ -100,6 +109,7 @@ public class Vehicle {
     public void move() {
 
 //        System.out.println(lightChangeListener.getSignal() + " " + this.hashCode()+ " moved " + getMileage());
+
 
         if (check()) {
 
@@ -144,28 +154,34 @@ public class Vehicle {
         double judgeMileage = mileage;
 
         if (road.getDirection() == Road.Direction.N2S || road.getDirection() == Road.Direction.W2E) {
-            judgeMileage += height / 2;
+            judgeMileage += height;
         } else {
-            judgeMileage += width / 2;
+            judgeMileage += width;
         }
 
+        double [] checkLine = {Road.halfLength, Road.halfLength + 1 * Road.crossBlockLength,
+                Road.halfLength + 2 * Road.crossBlockLength, Road.halfLength + 3 * Road.crossBlockLength,
+                Road.halfLength + 4 * Road.crossBlockLength, Road.halfLength + 5 * Road.crossBlockLength};
 
-        if (judgeMileage == Road.halfLength) {
+        if (judgeMileage == checkLine[0]) {
             if (road.type == Road.Type.Common && !lightChangeListener.getSignal()) {
                 flag = false;
             } else {
                 flag = checkMutexSignal(0) == 1;
             }
-        } else if (judgeMileage == Road.halfLength + Road.crossBlockLength) {
-            releaseMutexSignal(0);
+        } else if (judgeMileage == checkLine[1] ) {
             flag = checkMutexSignal(1) == 1;
-        } else if (judgeMileage == Road.halfLength + 2 * Road.crossBlockLength) {
-            releaseMutexSignal(1);
+        } else if (judgeMileage == checkLine[1] + width) {
+            releaseMutexSignal(0);
+        } else if (judgeMileage == checkLine[2]) {
             flag = checkMutexSignal(2) == 1;
-        } else if (judgeMileage == Road.halfLength + 3 * Road.crossBlockLength) {
-            releaseMutexSignal(2);
+        } else if (judgeMileage == checkLine[2] + width) {
+            releaseMutexSignal(1);
+        } else if (judgeMileage == checkLine[3] ) {
             flag = checkMutexSignal(3) == 1;
-        } else if (judgeMileage == Road.halfLength + 4 * Road.crossBlockLength) {
+        } else if (judgeMileage == checkLine[3] + width) {
+            releaseMutexSignal(2);
+        }  else if (judgeMileage == checkLine[4] + width) {
             releaseMutexSignal(3);
         }
 //        System.out.println(distance);
@@ -186,6 +202,7 @@ public class Vehicle {
         crossingMutexListener.release(road.getRowMutexIndexList()[index],
                 road.getColMutexIndexList()[index]);
     }
+
 
 
 }

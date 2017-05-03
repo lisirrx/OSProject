@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.shape.*?>
@@ -7,45 +8,36 @@
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 
-<Pane fx:id="mainPane" minHeight="800.0" minWidth="800.0" prefHeight="1000.0" prefWidth="1000.0"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="crossing.Controller">
+<Pane fx:id="mainPane" minHeight="800.0" minWidth="800.0" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="crossing.Controller">
     <children>
         <Group fx:id="mainGroup" layoutX="100.0" layoutY="100.0">
             <children>
-                <Rectangle fx:id="ewRoad" arcHeight="5.0" arcWidth="5.0" fill="#2b2b2b" height="160.0" layoutY="320.0"
-                           stroke="TRANSPARENT" strokeType="INSIDE" width="800.0"/>
-                <Rectangle fx:id="snRoad" arcHeight="5.0" arcWidth="5.0" fill="#2c2c2c" height="800.0" layoutX="320.0"
-                           stroke="TRANSPARENT" strokeType="INSIDE" width="160.0"/>
-                <Line fx:id="snMainLine" endX="400.0" endY="800.0" fill="WHITE" startX="400.0" stroke="WHITE"
-                      strokeWidth="3.0"/>
-                <Line fx:id="ewMainLine" endX="800.0" endY="400.0" fill="WHITE" startY="400.0" stroke="WHITE"
-                      strokeWidth="3.0"/>
-                <Line fx:id="n2sLine" endX="360.0" endY="800.0" fill="WHITE" startX="360.0" stroke="WHITE"/>
-                <Line fx:id="s2nLine" endX="440.0" endY="800.0" fill="WHITE" startX="440.0" stroke="WHITE"/>
-                <Line fx:id="e2wLine" endX="800.0" endY="360.0" fill="WHITE" startY="360.0" stroke="WHITE"/>
-                <Line fx:id="w2eLine" endX="800.0" endY="440.0" fill="WHITE" startY="440.0" stroke="WHITE"/>
-                <Rectangle fx:id="crossing" arcHeight="5.0" arcWidth="5.0" fill="#2b2b2b" height="160.0" layoutX="320.0"
-                           layoutY="320.0" stroke="WHITE" strokeType="INSIDE" width="160.0"/>
-                <Button fx:id="n2sComBtn_2" layoutX="249.0" layoutY="23.0" mnemonicParsing="false" onAction="#onClick"
-                        text="普通车辆"/>
-                <Button fx:id="n2sSpeBtn_3" layoutX="249.0" layoutY="60.0" mnemonicParsing="false" onAction="#onClick"
-                        text="特殊车辆"/>
-                <Button fx:id="e2wSpeBtn_7" layoutX="714.0" layoutY="281.0" mnemonicParsing="false" onAction="#onClick"
-                        text="特殊车辆"/>
-                <Button fx:id="e2wComBtn_6" layoutX="714.0" layoutY="244.0" mnemonicParsing="false" onAction="#onClick"
-                        text="普通车辆"/>
-                <Button fx:id="s2nSpeBtn_1" layoutX="489.0" layoutY="755.0" mnemonicParsing="false" onAction="#onClick"
-                        text="特殊车辆"/>
-                <Button fx:id="s2nComBtn_0" layoutX="489.0" layoutY="718.0" mnemonicParsing="false" onAction="#onClick"
-                        text="普通车辆"/>
-                <Button fx:id="w2eSpeBtn_5" layoutX="24.0" layoutY="529.0" mnemonicParsing="false" onAction="#onClick"
-                        text="特殊车辆"/>
-                <Button fx:id="w2eComBtn_4" layoutX="24.0" layoutY="492.0" mnemonicParsing="false" onAction="#onClick"
-                        text="普通车辆"/>
-                <Circle fx:id="NSLight" fill="WHITE" layoutX="531.0" layoutY="117.0" radius="32.0" stroke="BLACK"
-                        strokeType="INSIDE"/>
-                <Circle fx:id="EWLight" fill="WHITE" layoutX="701.0" layoutY="529.0" radius="32.0" stroke="BLACK"
-                        strokeType="INSIDE"/>
+                <Rectangle fx:id="ewRoad" arcHeight="5.0" arcWidth="5.0" fill="#2b2b2b" height="160.0" layoutY="320.0" stroke="TRANSPARENT" strokeType="INSIDE" width="800.0" />
+                <Rectangle fx:id="snRoad" arcHeight="5.0" arcWidth="5.0" fill="#2c2c2c" height="800.0" layoutX="320.0" stroke="TRANSPARENT" strokeType="INSIDE" width="160.0" />
+                <Line fx:id="snMainLine" endX="400.0" endY="800.0" fill="WHITE" startX="400.0" stroke="WHITE" strokeWidth="3.0" />
+                <Line fx:id="ewMainLine" endX="800.0" endY="400.0" fill="WHITE" startY="400.0" stroke="WHITE" strokeWidth="3.0" />
+                <Line fx:id="n2sLine" endX="360.0" endY="800.0" fill="WHITE" startX="360.0" stroke="WHITE" />
+                <Line fx:id="s2nLine" endX="440.0" endY="800.0" fill="WHITE" startX="440.0" stroke="WHITE" />
+                <Line fx:id="e2wLine" endX="800.0" endY="360.0" fill="WHITE" startY="360.0" stroke="WHITE" />
+                <Line fx:id="w2eLine" endX="800.0" endY="440.0" fill="WHITE" startY="440.0" stroke="WHITE" />
+                <Rectangle fx:id="crossing" arcHeight="5.0" arcWidth="5.0" fill="#2b2b2b" height="160.0" layoutX="320.0" layoutY="320.0" stroke="WHITE" strokeType="INSIDE" width="160.0" />
+                <Button fx:id="n2sComBtn_2" layoutX="249.0" layoutY="23.0" mnemonicParsing="false" onAction="#onClick" text="普通车辆" />
+                <Button fx:id="n2sSpeBtn_3" layoutX="249.0" layoutY="60.0" mnemonicParsing="false" onAction="#onClick" text="特殊车辆" />
+                <Button fx:id="e2wSpeBtn_7" layoutX="714.0" layoutY="281.0" mnemonicParsing="false" onAction="#onClick" text="特殊车辆" />
+                <Button fx:id="e2wComBtn_6" layoutX="714.0" layoutY="244.0" mnemonicParsing="false" onAction="#onClick" text="普通车辆" />
+                <Button fx:id="s2nSpeBtn_1" layoutX="489.0" layoutY="755.0" mnemonicParsing="false" onAction="#onClick" text="特殊车辆" />
+                <Button fx:id="s2nComBtn_0" layoutX="489.0" layoutY="718.0" mnemonicParsing="false" onAction="#onClick" text="普通车辆" />
+                <Button fx:id="w2eSpeBtn_5" layoutX="24.0" layoutY="529.0" mnemonicParsing="false" onAction="#onClick" text="特殊车辆" />
+                <Button fx:id="w2eComBtn_4" layoutX="24.0" layoutY="492.0" mnemonicParsing="false" onAction="#onClick" text="普通车辆" />
+                <Circle fx:id="NSLight" fill="WHITE" layoutX="531.0" layoutY="117.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
+                <Circle fx:id="EWLight" fill="WHITE" layoutX="701.0" layoutY="529.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
+            <Button fx:id="deadlockClear" layoutX="714.0" layoutY="105.0" mnemonicParsing="false" onAction="#deadlockClear" text="清除死锁" />
+            <Button fx:id="randomCreate" layoutX="714.0" layoutY="73.0" mnemonicParsing="false" onAction="#randomCreate" text="随机生成" />
+            <Label fx:id="deadlockLabel" layoutX="211.0" layoutY="156.0" text="Dead Lock!" textFill="#f80202" visible="false">
+               <font>
+                  <Font size="78.0" />
+               </font>
+            </Label>
             </children>
         </Group>
     </children>

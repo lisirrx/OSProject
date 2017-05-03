@@ -21,7 +21,19 @@ public class CrossingMutexListener implements EventListener{
     public void release(int x, int y){
         mutex.release(x, y);
     }
-}
+
+    public CrossingMutex getMutex() {
+        return mutex;
+    }
+
+    public void reset(){
+        for (int i = 0; i < 4; i++){
+            for (int j = 0; j < 4; j++){
+                mutex.getMutex()[i][j] = 1;
+                }
+            }
+        }
+    }
 
 
 

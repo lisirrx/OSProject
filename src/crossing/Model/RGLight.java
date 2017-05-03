@@ -15,13 +15,11 @@ public class RGLight {
 
     private final int RATE = 3; // by second
 
-    public static enum Direction {EW, SN}
+    public enum Direction {EW, SN}
 
-    Direction direction;
+    private Direction direction;
 
     private volatile Paint color; // false for red, true for green
-
-    private int period;
     private Circle circle;
 
     public RGLight(Direction direction, Paint color, Circle circle) {
