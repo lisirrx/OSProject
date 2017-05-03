@@ -4,7 +4,7 @@
 
 点击不同车道旁的按钮可以向车道中添加车并观察运行情况。
 
-![](https://github.com/lisirrx/OSProject/blob/master/screenshots/2.jpg)
+![](https://github.com/lisirrx/OSProject/blob/master/screenshots/2.png)
 
 
 
