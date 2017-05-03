@@ -138,16 +138,16 @@ public class Road{
 //                System.out.println(" Road " + this.hashCode() + " try to move a car");
 
                 if (v.getMileage() >= 1000){
-                    v.setMileage(Double.MAX_VALUE);
-                    v.setVisable(false);
+                    v.setMileage(Double.MAX_VALUE / 2);
                 } else {
                     try {
                         Thread.sleep(5);
                     } catch (InterruptedException e) {}
                     if (v.getMileage() <= 1000) {
+                        if (v.getMileage() > 800){
+                            v.setVisable(false);
+                        }
                         v.move();
-                    } else {
-                        v.setVisable(false);
                     }
                 }
             }

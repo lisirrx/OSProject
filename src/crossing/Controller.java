@@ -104,7 +104,7 @@ public class Controller {
         }
         cpuCount =  Runtime.getRuntime().availableProcessors();
 
-        createThreadAndSetvelocity(cpuCount);
+        createThreadAndSetvelocity(8);
 
     }
 
@@ -215,7 +215,7 @@ public class Controller {
                     threads.add(t);
                     t.start();
                 }
-                velocity =  10;
+                velocity =  5;
                 break;
             case 3:
             case 4:
@@ -224,9 +224,9 @@ public class Controller {
                     public void run() {
                         while (!Thread.interrupted()) {
                             roads[0].run();
+                            roads[1].run();
                             roads[2].run();
-                            roads[4].run();
-                            roads[6].run();
+                            roads[3].run();
                         }
                     }
                 });
@@ -234,9 +234,9 @@ public class Controller {
                     @Override
                     public void run() {
                         while (!Thread.interrupted()) {
-                            roads[1].run();
-                            roads[3].run();
+                            roads[4].run();
                             roads[5].run();
+                            roads[6].run();
                             roads[7].run();
                         }
                     }
@@ -246,7 +246,7 @@ public class Controller {
                     threads.add(t);
                     t.start();
                 }
-                velocity =  5;
+                velocity =  2;
                 break;
             case 5:
             case 6:
