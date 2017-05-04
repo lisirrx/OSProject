@@ -1,12 +1,24 @@
 # 操作系统进程管理3 红绿灯模拟
 
+*1552771 李晗*     [项目地址Github](https://github.com/lisirrx/OSProject)
+
 本项目模拟了十字路口受红绿灯调控时的车辆运行情况，可以添加特殊车辆无视红绿灯信号。
 
+程序每隔3s会随机生成一些车辆。
+
 点击不同车道旁的按钮可以向车道中添加车并观察运行情况。
+
+点击随机生成可以添加车辆。
+
+在出现死锁时会提示`Dead Lock！`， 点击清除死锁可以清除车道上的所有车。
 
 ![](https://github.com/lisirrx/OSProject/blob/master/screenshots/2.png)
 
 
+
+
+
+**注意：** 由于程序是计算密集型，会在添加车辆后延迟变高，为了达到更好的模拟效果，整个程序会进行多线程的计算。使用线程数和CPU逻辑核心数挂钩，2核心以下使用单线程进行，4核心使用两个线程，4核心以上使用四个线程，8核心以上使用8个核心计算。
 
 ## 开发/运行环境
 
@@ -55,6 +67,24 @@ src ---- crossing ---- fxml
 
 当有一辆车进入这个方块时，持有这个互斥量，离开时释放。
 
+```java
+public synchronized int checkAndSet(int x, int y) {
+        int temp = mutex[x][y];
+        if (temp == 1) {
+            mutex[x][y]--;
+        }
+        return temp;
+    }
+
+public synchronized void release(int x, int y) {
+        if (mutex[x][y] == 0) {
+            mutex[x][y]++;
+        }
+    }
+```
+
+
+
 这里用每辆车**模拟**一个待执行的线程，事实上并没有为每个车创建一个线程。
 
 整个项目通过对车辆的调度，完成了基本的进程调度思想的模拟，并练习了多线程编程的技能。
@@ -66,6 +96,8 @@ src ---- crossing ---- fxml
 首先，界面采用了jdk中较Swing更新的GUI框架 `JavaFx` ， 使用`fxml` 文件定义布局，实现了逻辑和布局的分离。
 
 在我的`layout.fxml`中，添加了车道、按钮、 红绿灯，并使用`fx:id`进行标记，这个写法让我觉得很像安卓开发时的感觉。
+
+特别的，通过Java的反射机制，将所有负责添加车辆的按钮绑定到同一个函数上，获取按钮的id，并将按钮相关的资源进行序列化，大大减少了代码量。
 
 ### 系统层次
 
@@ -116,49 +148,37 @@ src ---- crossing ---- fxml
 
         lightSN.start();
         lightEW.start();
-
-
-        for (int i = 0; i < 4; i++){
-            for (int j = 0; j < 2;  j++){
-                roads[i * 2 + j] = new Road(types[j], directions[i]);
-            }
-        }
-        for (int k = 0; k < 8; k ++){
-            Thread t = new Thread(roads[k]);
-            t.start();
+      
+        cpuCount =  Runtime.getRuntime().availableProcessors();
+        createThreadAndSetvelocity(cpuCount);
+      
         }
     }
 ```
 
 
 
-可以看到，我将每一个 `Road` 实现了`Runnable` 接口， 作为一个线程去执行，原因是`Road`中有一个不得不死循环的过程，为了**防止阻塞主线程**，在这里采用了多线程机制。
-
-在这里我们主要进行了各个事件监听的注册和线程的启动。
-
-
+在`createThreadAndSetvelocity`里我们主要进行了各个事件监听的注册和线程的启动。其中包含大量进行线程数目限制的判断代码略显臃肿。以后考虑将其改为线程池方式组织。
 
 那我们来看一下比较重要的`Road`类
 
 ```java
 private CopyOnWriteArrayList<Vehicle> vehicles;
 
-@Override
-    public void run() {
-        while (true) {
-            for (Vehicle v : vehicles) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {}
-                if (v.getMileage() <= 800) {
+public void run() {
+        for (Vehicle v : vehicles) {
+            if (v.getMileage() >= 1000) {
+                v.setMileage(Double.MAX_VALUE / 2);
+            } else {
+                if (v.getMileage() <= 1000) {
+                    if (v.getMileage() > 800) {
+                        v.setVisable(false);
+                    }
                     v.move();
-                } else {
-                    v.move();
-                    v.setVisable(false);
                 }
             }
         }
-    }
+}
 ```
 
 
@@ -246,7 +266,7 @@ public boolean addVehicle(Vehicle v){
     }
 ```
 
-在 `move`函数中，进行了是否可以前进的检查。
+在 `move`函数中，进行了是否可以前进的检查。每走到一个互斥量区域时，持有该互斥量，离开时释放。
 
 
 
@@ -278,3 +298,10 @@ public void registRGLightChangeListener(RGLightChangeListener listener){
 可以看到，我们每个方向上的车道只有一个红绿灯，作为发布者，而订阅者通过这个监听器类监听红绿灯的变化。
 
 这样我们可以完成跨线程的通讯。
+
+
+
+### 死锁检查
+
+首先，在`CrossingMutex`类中，使用dfs在互斥量区域中搜索是否成环，在`Controller`中进行计数，当发现始终无法解除死锁时会报警提示。
+
