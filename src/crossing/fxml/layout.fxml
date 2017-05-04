@@ -38,6 +38,8 @@
                   <Font size="78.0" />
                </font>
             </Label>
+            <Label fx:id="label1" layoutX="13.0" layoutY="41.0" text="CPU LogicProcessor : " />
+            <Label fx:id="label2" layoutX="13.0" layoutY="78.0" text="Thread Count : " />
             </children>
         </Group>
     </children>

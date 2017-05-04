@@ -17,6 +17,8 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -63,10 +65,16 @@ public class Controller {
     @FXML private Circle NSLight;
     @FXML private Circle EWLight;
 
+    @FXML private Label label1;
+    final private String label1Text = "CPU LogicProcessor : ";
+    @FXML private Label label2;
+    final private String label2Text = "Thread Count : ";
+
     private double velocity;
 
     private int cpuCount;
     private int deadLockCont = 0;
+    private boolean deadLockFlag = false;
     private CrossingMutex mutex;
     private CrossingMutexListener crossingMutexListener;
 
@@ -104,7 +112,20 @@ public class Controller {
         }
         cpuCount =  Runtime.getRuntime().availableProcessors();
 
-        createThreadAndSetvelocity(8);
+        createThreadAndSetvelocity(cpuCount);
+
+        Timer timer = new Timer();
+
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                    randomCreate();
+
+            }
+        };
+
+        timer.schedule(timerTask, 0, 3000);
+
 
     }
 
@@ -145,43 +166,44 @@ public class Controller {
         int index = Integer.valueOf(btn.getId().substring(btn.getId().length() - 1));
 //        System.out.println(index);
 
-        if(mutex.checkDeadLock()){
-            deadLockCont ++;
-            if (deadLockCont > 5) {
-                deadlockLabel.setVisible(true);
-            }
-        }
+        checkDeadLock();
 
         addAVehicle(index);
     }
 
 
     @FXML void deadlockClear(){
-        deadlockLabel.setVisible(false);
 
-        for (Road road : roads){
-            road.clear();
+        try {
+
+
+            deadlockLabel.setVisible(false);
+
+            for (Thread thread : threads) {
+                thread.interrupt();
+                thread = null;
+            }
+            threads.clear();
+
+
+            for (Road road : roads) {
+                road.clear();
+            }
+
+            crossingMutexListener.reset();
+            createThreadAndSetvelocity(cpuCount);
+
+        } catch (ArrayIndexOutOfBoundsException e){
+            crossingMutexListener.reset();
         }
 
-        for (Thread thread : threads){
-            thread.stop();
-            thread = null;
-        }
-        threads.clear();
 
-        crossingMutexListener.reset();
-
-       createThreadAndSetvelocity(cpuCount);
         
     }
 
     @FXML void randomCreate(){
-        if(mutex.checkDeadLock()){
-            deadLockCont ++;
-            if (deadLockCont > 7) {
-                deadlockLabel.setVisible(true);
-            }
-        }
+
+        checkDeadLock();
 
         int max=7;
         int min=0;
@@ -195,7 +217,29 @@ public class Controller {
         });
         t.start();
     }
-    public void createThreadAndSetvelocity(int cpuCount){
+
+
+    private void checkDeadLock(){
+        if(mutex.checkDeadLock()){
+            deadLockCont ++;
+            System.out.println(" Inc to ->" +  deadLockCont);
+            deadLockFlag = true;
+        } else if (deadLockFlag){
+            deadLockCont --;
+            System.out.println(" Dec to ->" + deadLockCont);
+            deadlockLabel.setVisible(false);
+            deadLockFlag = false;
+        }
+
+        if (deadLockCont >= 5) {
+            deadLockCont = 5;
+            deadlockLabel.setVisible(true);
+        }
+    }
+    public void createThreadAndSetvelocity (int cpuCount){
+
+        label1.setText(label1Text + cpuCount);
+
         ArrayList<Runnable> rs = new ArrayList<>();
         switch (cpuCount){
             case 1:
@@ -203,7 +247,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()){
+                        while (!Thread.currentThread().isInterrupted()){
                             for (Road road : roads){
                                 road.run();
                             }
@@ -215,14 +259,16 @@ public class Controller {
                     threads.add(t);
                     t.start();
                 }
-                velocity =  5;
+                velocity =  10;
+                label2.setText(label2Text + 1);
                 break;
             case 3:
             case 4:
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
+
                             roads[0].run();
                             roads[1].run();
                             roads[2].run();
@@ -233,7 +279,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                             roads[4].run();
                             roads[5].run();
                             roads[6].run();
@@ -246,7 +292,8 @@ public class Controller {
                     threads.add(t);
                     t.start();
                 }
-                velocity =  2;
+                velocity =  5;
+                label2.setText(label2Text  + 2);
                 break;
             case 5:
             case 6:
@@ -255,7 +302,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                             roads[0].run();
                             roads[1].run();
                         }
@@ -264,7 +311,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                             roads[2].run();
                             roads[3].run();
                         }
@@ -273,7 +320,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                             roads[4].run();
                             roads[5].run();
                         }
@@ -282,7 +329,7 @@ public class Controller {
                 rs.add(new Runnable() {
                     @Override
                     public void run() {
-                        while (!Thread.interrupted()) {
+                        while (!Thread.currentThread().isInterrupted()) {
                             roads[6].run();
                             roads[7].run();
                         }
@@ -294,6 +341,7 @@ public class Controller {
                     t.start();
                 }
                 velocity = 2;
+                label2.setText(label2Text  + 4);
                 break;
             case 9:
             case 10:
@@ -305,14 +353,19 @@ public class Controller {
             case 16:
                 for (Road road : roads){
                     Thread t = new Thread(()-> {
-                        while (!Thread.interrupted()) {
-                            road.run();
+                        while (true) {
+                            if (Thread.currentThread().isInterrupted()){
+//                                System.out.println("Interrputed");
+                            } else {
+                                road.run();
+                            }
                         }
                     });
                     threads.add(t);
                     t.start();
                 }
                 velocity = 1;
+                label2.setText(label2Text  + 8);
                 break;
         }
     }

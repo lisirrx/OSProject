@@ -133,24 +133,30 @@ public class Road{
     public void run() {
 //        System.out.println(" Road " + this.hashCode() + " try to move a car");
 
+        try {
             for (Vehicle v : vehicles) {
 
 //                System.out.println(" Road " + this.hashCode() + " try to move a car");
 
-                if (v.getMileage() >= 1000){
+                if (v.getMileage() >= 1000) {
                     v.setMileage(Double.MAX_VALUE / 2);
                 } else {
                     try {
                         Thread.sleep(5);
-                    } catch (InterruptedException e) {}
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     if (v.getMileage() <= 1000) {
-                        if (v.getMileage() > 800){
+                        if (v.getMileage() > 800) {
                             v.setVisable(false);
                         }
                         v.move();
                     }
                 }
             }
+        } catch (ArrayIndexOutOfBoundsException e){
+
+        }
     }
 
     public void clear(){
